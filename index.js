@@ -1,9 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const {
-    MongoClient,
-    ObjectId
-} = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -19,128 +16,126 @@ app.use(cors())
 
 //Root route
 app.get('/', (req, res) => {
-    res.status(300).redirect('/info.html');
+    res.status(300).redirect('/index.html');
 });
 
-// DONE Return all dogs from the database
-app.get('/dogs', async (req, res) => {
+// DONE Return all Tea from the database
+app.get('/teas', async (req, res) =>{
 
-    try {
+    try{
         //connect to the db
         await client.connect();
 
-        //retrieve the dogs collection data
-        const colli = client.db('courseProject').collection('dogs');
+        //retrieve the tea of collection data from teaproject
+        const colli = client.db('teaproject').collection('teas');
         const chs = await colli.find({}).toArray();
 
         //Send back the data with the response
-        res.status(200).send(chs);
-    } catch (error) {
+    res.status(200).send(chs);
+    }catch(error){
         console.log(error)
         res.status(500).send({
             error: 'Something went wrong',
             value: error
         });
-    } finally {
+    }finally {
         await client.close();
     }
 });
 
-// DONE /dogs/:id
-app.get('/dogs/:id', async (req, res) => {
+app.get('/teas/:id', async (req,res) => {
     //id is located in the query: req.params.id
-    try {
+    try{
         //connect to the db
         await client.connect();
 
         //retrieve the boardgame collection data
-        const colli = client.db('courseProject').collection('dogs');
+        const colli = client.db('session7').collection('teas');
 
-        //only look for a dog with this ID
-        const query = {
-            _id: ObjectId(req.params.id)
-        };
+        //only look for a tea with this ID
+        const query = { _id: ObjectId(req.params.id)};
 
-        const dog = await colli.findOne(query);
+        const tea = await colli.findOne(query);
 
-        if (dog) {
+        if(tea){
             //Send back the file
-            res.status(200).send(dog);
+              res.status(200).send(tea);
             return;
-        } else {
-            res.status(400).send('Dog could not be found with id: ' + req.params.id);
+        }else{
+            res.status(400).send('teas could not be found with id: ' + req.params.id);
         }
-
-    } catch (error) {
+      
+    }catch(error){
         console.log(error);
         res.status(500).send({
             error: 'Something went wrong',
             value: error
         });
-    } finally {
+    }finally {
         await client.close();
     }
 });
 
-// DONE save Dogs
-app.post('/dogs', async (req, res) => {
+// DONE save the teas
+app.post('/teas', async (req, res) => {
 
-    if (!req.body.name || !req.body.generation || !req.body.breed) {
-        res.status(400).send('Bad request: missing name, generation, or breed');
+    if(!req.body.name || !req.body.details || !req.body.ingredients){
+        res.status(400).send('Bad request: missing name, details, or ingredients');
         return;
     }
 
-    try {
+    try{
         //connect to the db
         await client.connect();
 
         //retrieve the boardgame collection data
-        const colli = client.db('courseProject').collection('dogs');
+        const colli = client.db('teaproject').collection('teas');
 
-        // Validation for double dogs
-        const bg = await colli.findOne({
-            name: req.body.name,
-            breed: req.body.breed
-        });
-        if (bg) {
-            res.status(400).send(`Bad request: Dog already exists with name ${req.body.name} with breed ${req.body.breed}`);
+        // Validation for double teas
+        const bg = await colli.findOne({name: req.body.name, details: req.body.details});
+        if(bg){
+            res.status(400).send(`Bad request: tea already exists with name ${req.body.name} for details ${req.body.details}`);
             return;
-        }
-        // Create the new Dog object
-        let newDog = {
+        } 
+        // Create the new tea object
+        let newTea = {
             name: req.body.name,
-            generation: req.body.generation,
-            breed: req.body.breed
+            details: req.body.details,
+            ingredients: req.body.ingredients
+        }
+        //Add optional session field
+        if(req.body.session){
+          newTea.session = req.body.session;
         }
         // Insert into the database
-        let insertResult = await colli.insertOne(newDog);
+        let insertResult = await colli.insertOne(newTea);
 
         //Send back successmessage
-        res.status(201).json(newDog);
+    res.status(201).json(newTea);
         return;
-    } catch (error) {
+    }catch(error){
         console.log(error);
         res.status(500).send({
             error: 'Something went wrong',
             value: error
         });
-    } finally {
+    }finally {
         await client.close();
     }
 });
 
-//Update dog
-app.put('/dogs/:id', async (req, res) => {
+//Update tea
+app.put('/teas/:id', async (req,res) => {
     //Check for body data
-    if (!req.body.name || !req.body.generation || !req.body.breed) {
+    if(!req.body.name || !req.body.details || !req.body.ingredients){
         res.status(400).send({
             error: 'Bad Request',
-            value: 'Missing name, generation or breed property'
+            value: 'Missing name, details or ingredients property'
         });
         return;
     }
     // Check for id in url
-    if (!req.params.id) {
+    if(!req.params.id){
         res.status(400).send({
             error: 'Bad Request',
             value: 'Missing id in url'
@@ -148,84 +143,80 @@ app.put('/dogs/:id', async (req, res) => {
         return;
     }
 
-    try {
-        //connect to the db
+    try{
+         //connect to the db
         await client.connect();
 
-        //retrieve the dogs collection data
-        const colli = client.db('courseProject').collection('dogs');
+         //retrieve the teas collection data
+        const colli = client.db('teaproject').collection('teas');
 
-        // Validation for existing dog
-        const bg = await colli.findOne({
-            _id: ObjectId(req.params.id)
-        });
-        if (!bg) {
+         // Validation for existing tea
+        const bg = await colli.findOne({_id: ObjectId(req.params.id)});
+        if(!bg){
             res.status(400).send({
                 error: 'Bad Request',
-                value: `Dog does not exist with id ${req.params.id}`
+                value: `Tea does not exist with id ${req.params.id}`
             });
             return;
-        }
-        // Create the new Dog object
-        let newDog = {
+        } 
+         // Create the new Tea object
+        let newTea = {
             name: req.body.name,
-            generation: req.body.generation,
-            breed: req.body.breed,
+            details: req.body.details,
+            ingredients: req.body.ingredients,
         }
+        // Add the optional session field
+        if(req.body.session){
+            newTea.session = req.body.session;
+        }
+        
+         // Insert into the database
+        let updateResult = await colli.updateOne({_id: ObjectId(req.params.id)}, 
+        {$set: newTea});
 
-
-        // Insert into the database
-        let updateResult = await colli.updateOne({
-            _id: ObjectId(req.params.id)
-        }, {
-            $set: newDog
-        });
-
-        //Send back successmessage
+         //Send back successmessage
         res.status(201).json(updateResult);
         return;
-    } catch (error) {
+    }catch(error){
         console.log(error);
         res.status(500).send({
             error: 'Something went wrong',
             value: error
         });
-    } finally {
+    }finally {
         await client.close();
     }
 });
 
-// delete dog
-app.delete('/dogs/:id', async (req, res) => {
-    if (!req.params.id) {
+// delete Tea
+app.delete('/teas/:id', async (req,res) => {
+    if(!req.params.id){
         res.status(400).send({
             error: 'Bad Request',
-            value: 'No id available in url'
+            value :'No id available in url'
         });
         return;
     }
 
-    try {
+    try{
         //connect to the db
         await client.connect();
 
         //retrieve the boardgame collection data
-        const colli = client.db('courseProject').collection('dogs');
+        const colli = client.db('teaproject').collection('teas');
 
-        // Validation for double dogs
-        const bg = await colli.deleteOne({
-            _id: ObjectId(req.params.id)
-        });
+        // Validation for double teas
+        const bg = await colli.deleteOne({_id: ObjectId(req.params.id)});
         //Send back successmessage
         res.status(201).json(result);
         return;
-    } catch (error) {
+    }catch(error){
         console.log(error);
         res.status(500).send({
             error: 'Something went wrong',
             value: error
         });
-    } finally {
+    }finally {
         await client.close();
     }
 });

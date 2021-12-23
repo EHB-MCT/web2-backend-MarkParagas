@@ -1,0 +1,24 @@
+{
+  "name": "web2-backend-markparagas",
+  "version": "1.0.0",
+  "description": "Used source: https://github.com/EHB-MCT/web2-groupproject-backend-team-mark",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EHB-MCT/web2-backend-MarkParagas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EHB-MCT/web2-backend-MarkParagas/issues"
+  },
+  "homepage": "https://github.com/EHB-MCT/web2-backend-MarkParagas#readme",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2"
+  }
+}
