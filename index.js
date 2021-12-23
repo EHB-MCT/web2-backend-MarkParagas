@@ -169,7 +169,7 @@ app.put('/teas/:id', async (req,res) => {
             ingredients: req.body.ingredients,
             make: req.body.make,
             time: req.body.time,
-            water: req.body.water,
+            water: req.body.water
         }
         // Add the optional session field
         if(req.body.session){
