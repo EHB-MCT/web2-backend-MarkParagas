@@ -26,7 +26,7 @@ app.get('/teas', async (req, res) =>{
         //connect to the db
         await client.connect();
 
-        //retrieve the tea of collection data from teaproject
+        //retrieve the tea of collection data
         const colli = client.db('teaproject').collection('teas');
         const chs = await colli.find({}).toArray();
 
