@@ -50,7 +50,7 @@ app.get('/teas/:id', async (req,res) => {
         await client.connect();
 
         //retrieve the boardgame collection data
-        const colli = client.db('session7').collection('teas');
+        const colli = client.db('teaproject').collection('teas');
 
         //only look for a tea with this ID
         const query = { _id: ObjectId(req.params.id)};
@@ -105,10 +105,6 @@ app.post('/teas', async (req, res) => {
             make: req.body.make,
             time: req.body.time,
             water: req.body.water
-        }
-        //Add optional session field
-        if(req.body.session){
-          newTea.session = req.body.session;
         }
         // Insert into the database
         let insertResult = await colli.insertOne(newTea);
@@ -170,10 +166,6 @@ app.put('/teas/:id', async (req,res) => {
             make: req.body.make,
             time: req.body.time,
             water: req.body.water
-        }
-        // Add the optional session field
-        if(req.body.session){
-            newTea.session = req.body.session;
         }
         
          // Insert into the database
