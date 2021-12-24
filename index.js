@@ -79,7 +79,7 @@ app.get('/teas/:id', async (req,res) => {
 // DONE save the teas
 app.post('/teas', async (req, res) => {
 
-    if(!req.body.name || !req.body.details || !req.body.ingredients){
+    if(!req.body.name || !req.body.details || !req.body.ingredients || !req.body.make || !req.body.time || !req.body.water){
         res.status(400).send('Bad request: missing name, details, ingredients, make, time or water');
         return;
     }
@@ -101,7 +101,10 @@ app.post('/teas', async (req, res) => {
         let newTea = {
             name: req.body.name,
             details: req.body.details,
-            ingredients: req.body.ingredients
+            ingredients: req.body.ingredients,
+            make: req.body.make,
+            time: req.body.time,
+            water: req.body.water
         }
         //Add optional session field
         if(req.body.session){
@@ -127,7 +130,7 @@ app.post('/teas', async (req, res) => {
 //Update tea
 app.put('/teas/:id', async (req,res) => {
     //Check for body data
-    if(!req.body.name || !req.body.details || !req.body.ingredients){
+    if(!req.body.name || !req.body.details || !req.body.ingredients || !req.body.make || !req.body.time || !req.body.water){
         res.status(400).send({
             error: 'Bad Request',
             value: 'Missing name, details, ingredients, make, time or water property'
@@ -163,7 +166,10 @@ app.put('/teas/:id', async (req,res) => {
         let newTea = {
             name: req.body.name,
             details: req.body.details,
-            ingredients: req.body.ingredients
+            ingredients: req.body.ingredients,
+            make: req.body.make,
+            time: req.body.time,
+            water: req.body.water
         }
         // Add the optional session field
         if(req.body.session){
